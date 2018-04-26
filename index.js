@@ -6,22 +6,22 @@ let postsCommEl;
 let loadButtonEl;
 
 
-function mouseAction(strongEl) {
-    strongEl.addEventListener("click", function() { getComments(strongEl); });
+function mouseAction(strongEl, post) {
+    strongEl.addEventListener("click", function() { getComments(strongEl, post); });
     strongEl.addEventListener("mouseover", function(){strongEl.style.backgroundColor="red"}, false);
     strongEl.addEventListener("mouseout", function(){strongEl.style.backgroundColor="white"}, false);
 }
 
 
 //testing
-function getComments(strongEl){
+function getComments(strongEl, post){
     const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', function(evt) { parseComments(evt, strongEl) });
+    xhr.addEventListener('load', function(evt) { parseComments(evt, strongEl, post) });
     xhr.open('GET', 'https://jsonplaceholder.typicode.com/comments');
     xhr.send();
 }
 
-function parseComments(evt, strongEl){
+function parseComments(evt, strongEl, post){
     postsCommEl.style.display = 'block';
 
     const text = evt.target.responseText;
@@ -32,26 +32,28 @@ function parseComments(evt, strongEl){
     while (commEl.firstChild) {
         commEl.removeChild(commEl.firstChild);
     }
-   
-    commEl.appendChild(createCommentList(comm));
+    
+    commEl.appendChild(createCommentList(comm, post));
     strongEl.parentElement.appendChild(commEl);
 
 }
 
-function createCommentList(comment) {
+function createCommentList(comment, post) {
     const ulEl = document.createElement('ul');
 
     for (let i = 0; i < comment.length; i++) {
         const com = comment[i];
-    
-        const pEl = document.createElement('p');
-        pEl.appendChild(document.createTextNode(`comment: ${com.body}`));
         
-        const liEl = document.createElement('li');
-        liEl.appendChild(pEl);
+        const pEl = document.createElement('p');
+        if(com.postId == post.id) {        
+            pEl.appendChild(document.createTextNode(`comment: ${com.body}`));
+            
+            const liEl = document.createElement('li');
+            liEl.appendChild(pEl);
+        
 
         ulEl.appendChild(liEl);
-        
+        }
     }
 
     return ulEl;
@@ -74,7 +76,7 @@ function createPostsList(posts) {
         const pEl = document.createElement('p');
         pEl.appendChild(strongEl);
         pEl.appendChild(document.createTextNode(`: ${post.body}`));
-        mouseAction(strongEl);
+        mouseAction(strongEl, post);
 
         // creating list item
         const liEl = document.createElement('li');
