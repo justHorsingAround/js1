@@ -2,54 +2,51 @@ const BASE_URL = 'https://jsonplaceholder.typicode.com';
 
 let usersDivEl;
 let postsDivEl;
+let postsCommEl;
 let loadButtonEl;
 
 
 function mouseAction(strongEl) {
-    strongEl.addEventListener("click", getComments);
+    strongEl.addEventListener("click", function() { getComments(strongEl); });
     strongEl.addEventListener("mouseover", function(){strongEl.style.backgroundColor="red"}, false);
     strongEl.addEventListener("mouseout", function(){strongEl.style.backgroundColor="white"}, false);
 }
 
 
 //testing
-function getComments(){
+function getComments(strongEl){
     const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', parseComments);
+    xhr.addEventListener('load', function(evt) { parseComments(evt, strongEl) });
     xhr.open('GET', 'https://jsonplaceholder.typicode.com/comments');
     xhr.send();
 }
 
-function parseComments(){
-    const text = this.responseText;
+function parseComments(evt, strongEl){
+    postsCommEl.style.display = 'block';
+
+    const text = evt.target.responseText;
+    console.log(evt.target);
     const comm = JSON.parse(text);
     const commEl = document.getElementById('comments');
-    
+
     while (commEl.firstChild) {
         commEl.removeChild(commEl.firstChild);
     }
+   
     commEl.appendChild(createCommentList(comm));
-    
+    strongEl.parentElement.appendChild(commEl);
 
 }
 
 function createCommentList(comment) {
-    //console.log('comments: ');
-    //console.log(comment);
     const ulEl = document.createElement('ul');
 
     for (let i = 0; i < comment.length; i++) {
         const com = comment[i];
-        //console.log(i);
-
-        // creating paragraph
-        
+    
         const pEl = document.createElement('p');
-        pEl.appendChild(document.createTextNode(`: ${com.name}`));
-        //console.log(pEl);
+        pEl.appendChild(document.createTextNode(`comment: ${com.body}`));
         
-
-        // creating list item
         const liEl = document.createElement('li');
         liEl.appendChild(pEl);
 
@@ -63,6 +60,7 @@ function createCommentList(comment) {
 
 function createPostsList(posts) {
     const ulEl = document.createElement('ul');
+    //u1El.class = "posts-list-inner";
 
     for (let i = 0; i < posts.length; i++) {
         const post = posts[i];
@@ -71,11 +69,12 @@ function createPostsList(posts) {
         const strongEl = document.createElement('strong');        
         strongEl.textContent = post.title;      
        
-        mouseAction(strongEl);
+        
 
         const pEl = document.createElement('p');
         pEl.appendChild(strongEl);
         pEl.appendChild(document.createTextNode(`: ${post.body}`));
+        mouseAction(strongEl);
 
         // creating list item
         const liEl = document.createElement('li');
@@ -94,10 +93,16 @@ function onPostsReceived() {
     const posts = JSON.parse(text);
 
     const divEl = document.getElementById('posts-content');
-    while (divEl.firstChild) {
-        divEl.removeChild(divEl.firstChild);
+    const postEl = document.getElementById('posts-list');
+    const comEl = document.getElementById('comments');
+
+    divEl.appendChild(comEl);
+
+    console.log(comEl);
+    while (postEl.firstChild) {
+        postEl.removeChild(postEl.firstChild);
     }
-    divEl.appendChild(createPostsList(posts));
+    postEl.appendChild(createPostsList(posts));
     console.log(divEl);
 }
 
@@ -188,6 +193,7 @@ function onLoadUsers() {
 document.addEventListener('DOMContentLoaded', (event) => {
     usersDivEl = document.getElementById('users');
     postsDivEl = document.getElementById('posts');
+    postsCommEl = document.getElementById('comments');
     loadButtonEl = document.getElementById('load-users');
     loadButtonEl.addEventListener('click', onLoadUsers);
     
