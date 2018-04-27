@@ -5,6 +5,7 @@ let postsDivEl;
 let postsCommEl;
 let loadButtonEl;
 let loadAlbums;
+let picsDivEl;
 
 
 function mouseAction(strongEl, callback) {
@@ -25,7 +26,7 @@ function parseComments(evt, strongEl, post){
     postsCommEl.style.display = 'block';
 
     const text = evt.target.responseText;
-    console.log(evt.target);
+    //console.log(evt.target);
     const comm = JSON.parse(text);
     const commEl = document.getElementById('comments');
 
@@ -97,7 +98,7 @@ function createPictures(albums){
         
         const pEl = document.createElement('p');
         pEl.appendChild(strongEl);
-        //mouseAction(strongEl, pic);
+        mouseAction(strongEl, function(){onLoadPictures(strongEl, pic)});
 
         const liEl = document.createElement('li');
         liEl.appendChild(pEl);
@@ -126,16 +127,66 @@ function onPostsReceived() {
     postEl.appendChild(createPostsList(posts));
 }
 
+
+function onPicturesRecieved(evt, strongEl, poster){
+    picsDivEl.style.display = 'block';
+
+    const text =  evt.target.responseText;
+    const pics = JSON.parse(text);
+    const picEl = document.getElementById('picture-list');
+
+    picEl.appendChild(createImagesList(pics, poster));
+    strongEl.appendChild(picEl);
+}
+
+function createImagesList(pics, poster) {
+    const ulEl = document.createElement('ul');
+
+    for (let i = 0; i < pics.length; i++) {
+        const pic = pics[i];       
+        if(pic.albumId == poster.id) {
+
+            const strongEl = document.createElement('strong');        
+            strongEl.textContent = pic.url;       
+            
+
+            const pEl = document.createElement('p');
+            pEl.appendChild(strongEl);
+            //pEl.appendChild(document.createTextNode(`: ${pic.id}`));
+
+            // creating list item
+            const liEl = document.createElement('li');
+            liEl.appendChild(pEl);
+
+            ulEl.appendChild(liEl);
+        }
+    }
+    return ulEl;
+}
+
+
 function onAlbumsRecieved(evt) {
     loadAlbums.style.display = 'block';
 
     const text = evt.target.responseText;
     const albums = JSON.parse(text);
     const albumEl = document.getElementById('pictures');
+
     console.log(albums);
     albumEl.appendChild(createPictures(albums));
 
+
 }
+
+//this
+function onLoadPictures(strongEl, pics){
+
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function(evt) { onPicturesRecieved(evt, strongEl, pics)});
+    xhr.open('GET', "https://jsonplaceholder.typicode.com/photos");
+    xhr.send();
+}
+
 
 function onLoadPosts() {
     const el = this;
@@ -251,6 +302,7 @@ function onLoadUsers() {
 document.addEventListener('DOMContentLoaded', (event) => {
     usersDivEl = document.getElementById('users');
     postsDivEl = document.getElementById('posts');
+    picsDivEl = document.getElementById('picture-list');
     postsCommEl = document.getElementById('comments');
     loadAlbums = document.getElementById('pictures');
     loadButtonEl = document.getElementById('load-users');
