@@ -141,27 +141,44 @@ function onPicturesRecieved(evt, strongEl, poster){
 
 function createImagesList(pics, poster) {
     const ulEl = document.createElement('ul');
+    for (let i = 0; i < pics.length; i++) {
+        const pic = pics[i];       
+        if(pic.albumId == poster.id) {
+            show_image(pic.url, 50, 40);
+        }
+    }
 
+    /*
     for (let i = 0; i < pics.length; i++) {
         const pic = pics[i];       
         if(pic.albumId == poster.id) {
 
             const strongEl = document.createElement('strong');        
-            strongEl.textContent = pic.url;       
+            strongEl.textContent = pic.url;
+            show_image(pic.url, 50, 40);       
             
 
             const pEl = document.createElement('p');
             pEl.appendChild(strongEl);
-            //pEl.appendChild(document.createTextNode(`: ${pic.id}`));
-
-            // creating list item
+            
             const liEl = document.createElement('li');
             liEl.appendChild(pEl);
 
             ulEl.appendChild(liEl);
         }
     }
+    */
     return ulEl;
+}
+
+function show_image(src, width, height) {
+    var img = document.createElement("img");
+    img.src = src;
+    img.width = width;
+    img.height = height;
+
+    // This next line will just add it to the <body> tag
+    document.body.appendChild(img);
 }
 
 
@@ -174,13 +191,10 @@ function onAlbumsRecieved(evt) {
 
     console.log(albums);
     albumEl.appendChild(createPictures(albums));
-
-
 }
 
-//this
-function onLoadPictures(strongEl, pics){
 
+function onLoadPictures(strongEl, pics){
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', function(evt) { onPicturesRecieved(evt, strongEl, pics)});
     xhr.open('GET', "https://jsonplaceholder.typicode.com/photos");
@@ -306,6 +320,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
     postsCommEl = document.getElementById('comments');
     loadAlbums = document.getElementById('pictures');
     loadButtonEl = document.getElementById('load-users');
-    loadButtonEl.addEventListener('click', onLoadUsers);
-    
+    loadButtonEl.addEventListener('click', onLoadUsers);    
 });
