@@ -4,6 +4,7 @@ let usersDivEl;
 let postsDivEl;
 let postsCommEl;
 let loadButtonEl;
+let loadButtonAlb;
 
 
 function mouseAction(strongEl, post) {
@@ -13,7 +14,6 @@ function mouseAction(strongEl, post) {
 }
 
 
-//testing
 function getComments(strongEl, post){
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', function(evt) { parseComments(evt, strongEl, post) });
@@ -118,6 +118,17 @@ function onLoadPosts() {
     xhr.send();
 }
 
+function onLoadAlbums() {
+    const element = this;
+    const albumId = element.getAttribute('albums');
+
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function(){console.log('loaded onLoadAlbums')});
+    xhr.open('GET', "https://jsonplaceholder.typicode.com/photos");
+    xhr.send();    
+}
+
+
 function createUsersTableHeader() {
     const idTdEl = document.createElement('td');
     idTdEl.textContent = 'Id';
@@ -135,7 +146,7 @@ function createUsersTableHeader() {
 }
 
 function createUsersTableBody(users) {
-    const tbodyEl = document.createElement('tbody');
+    const tbodyEl = document.createElement('tbody');    
 
     for (let i = 0; i < users.length; i++) {
         const user = users[i];
@@ -152,15 +163,27 @@ function createUsersTableBody(users) {
         buttonEl.textContent = user.name;
         buttonEl.setAttributeNode(dataUserIdAttr);
         buttonEl.addEventListener('click', onLoadPosts);
+
+        // ---------------------------------
+        
+        const albums = document.createAttribute('albums');
+        const buttonAlb = document.createElement('button');
+        buttonAlb.textContent = user.name + "`s Albums";
+        buttonAlb.setAttributeNode(albums);
+        buttonAlb.addEventListener('click', onLoadAlbums);
         
 
         const nameTdEl = document.createElement('td');
         nameTdEl.appendChild(buttonEl);
 
+        const albumTdEl = document.createElement('td');
+        albumTdEl.appendChild(buttonAlb);
+
         // creating row
         const trEl = document.createElement('tr');
         trEl.appendChild(idTdEl);
         trEl.appendChild(nameTdEl);
+        trEl.appendChild(albumTdEl);
 
         tbodyEl.appendChild(trEl);
     }
@@ -191,6 +214,7 @@ function onLoadUsers() {
     xhr.open('GET', BASE_URL + '/users');
     xhr.send();
 }
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
     usersDivEl = document.getElementById('users');
