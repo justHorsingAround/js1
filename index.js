@@ -7,8 +7,8 @@ let loadButtonEl;
 let loadAlbums;
 
 
-function mouseAction(strongEl, post) {
-    strongEl.addEventListener("click", function() { getComments(strongEl, post); });
+function mouseAction(strongEl, callback) {
+    strongEl.addEventListener("click", callback);
     strongEl.addEventListener("mouseover", function(){strongEl.style.backgroundColor="red"}, false);
     strongEl.addEventListener("mouseout", function(){strongEl.style.backgroundColor="white"}, false);
 }
@@ -74,7 +74,7 @@ function createPostsList(posts) {
         const pEl = document.createElement('p');
         pEl.appendChild(strongEl);
         pEl.appendChild(document.createTextNode(`: ${post.body}`));
-        mouseAction(strongEl, post);
+        mouseAction(strongEl, function(){getComments(strongEl, post);});
 
         // creating list item
         const liEl = document.createElement('li');
@@ -108,8 +108,6 @@ function createPictures(albums){
 }
 
 
-
-
 function onPostsReceived() {
     postsDivEl.style.display = 'block';
 
@@ -128,7 +126,6 @@ function onPostsReceived() {
     postEl.appendChild(createPostsList(posts));
 }
 
-//this
 function onAlbumsRecieved(evt) {
     loadAlbums.style.display = 'block';
 
