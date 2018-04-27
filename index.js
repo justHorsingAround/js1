@@ -86,6 +86,30 @@ function createPostsList(posts) {
     return ulEl;
 }
 
+function createPictures(albums){
+    const ulEl = document.createElement('ul');
+
+    for (let i = 0; i < albums.length; i++) {
+        const pic = albums[i];
+
+        const strongEl = document.createElement('strong');        
+        strongEl.textContent = pic.title;       
+        
+        const pEl = document.createElement('p');
+        pEl.appendChild(strongEl);
+        //mouseAction(strongEl, pic);
+
+        const liEl = document.createElement('li');
+        liEl.appendChild(pEl);
+
+        ulEl.appendChild(liEl);
+    }
+    return ulEl;
+}
+
+
+
+
 function onPostsReceived() {
     postsDivEl.style.display = 'block';
 
@@ -128,11 +152,11 @@ function onLoadPosts() {
 
 function onLoadAlbums() {
     const element = this;
-    const albumId = element.getAttribute('albums');
+    const userId = element.getAttribute('albums');
 
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', function(evt) { onAlbumsRecieved(evt)});
-    xhr.open('GET', "https://jsonplaceholder.typicode.com/photos");
+    xhr.open('GET', "https://jsonplaceholder.typicode.com/albums" + "?userId=" + userId);
     xhr.send();    
 }
 
