@@ -55,7 +55,6 @@ function createCommentList(comment, post) {
         ulEl.appendChild(liEl);
         }
     }
-
     return ulEl;
 }
 
@@ -69,8 +68,7 @@ function createPostsList(posts) {
 
         // creating paragraph
         const strongEl = document.createElement('strong');        
-        strongEl.textContent = post.title;      
-       
+        strongEl.textContent = post.title;       
         
 
         const pEl = document.createElement('p');
@@ -106,14 +104,15 @@ function onPostsReceived() {
     postEl.appendChild(createPostsList(posts));
 }
 
+//this
 function onAlbumsRecieved(evt) {
     loadAlbums.style.display = 'block';
 
     const text = evt.target.responseText;
     const albums = JSON.parse(text);
-    console.log(text);
-
-
+    const albumEl = document.getElementById('pictures');
+    console.log(albums);
+    albumEl.appendChild(createPictures(albums));
 
 }
 
